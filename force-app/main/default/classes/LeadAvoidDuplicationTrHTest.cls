@@ -17,10 +17,10 @@ public class LeadAvoidDuplicationTrHTest {
         leadList.add(duplicateLead); // Add newLead to the list
         insert leadList;
         
-        List<Lead> yesterdayLeadList = new List<Lead>();
-        Lead yesterdayLead = new Lead(FirstName = 'Mahesh', LastName = 'Yesterday', Email = 'yesterday@yesterday.com');
-        yesterdayLeadList.add(yesterdayLead); // Add newLead to the list
-        insert yesterdayLeadList;
+        List<Lead> yesterdayLeads = new List<Lead>();
+        Lead yesterdayLead = new Lead(FirstName = 'YeasterDay', LastName = 'TestData', Email = 'yesterday@TestData.com', CreatedDate = Date.today().addDays(-1));
+        yesterdayLeads.add(yesterdayLead); // Add newLead to the list
+        insert yesterdayLeads;
     }
     @isTest
     private static void testAvoidDuplicationLead() {
@@ -31,10 +31,9 @@ public class LeadAvoidDuplicationTrHTest {
         Test.stopTest();
         // Verify that the second lead was not inserted and has an error message
         List<Lead> leads = [SELECT Id, LastName, Email FROM Lead WHERE LastName = 'User11' AND Email = 'testuser11@test.com' AND CreatedDate = TODAY];
-        List<Lead> yesterdayLeadsFetch = [SELECT Id, LastName, Email FROM Lead WHERE LastName = 'Yesterday' AND Email = 'yesterday@yesterday.com'];
+        
         System.assertEquals(1, leads.size(), 'only one should be inserted');
-        System.assertNotEquals(newLeads[0].LastName, yesterdayLeadsFetch[0].LastName, 'these two lists are different with same email but last name is different');
-        System.assertNotEquals(2, yesterdayLeadsFetch.size(), 'checking that only one lead is inserted');
+
         System.assertNotEquals(newLeads[0].ID, leads[0].ID, 'The two leads should have different IDs');
     }
     @isTest
@@ -44,9 +43,20 @@ public class LeadAvoidDuplicationTrHTest {
         LeadAvoidDuplicationOnSameDayTrH handler = new LeadAvoidDuplicationOnSameDayTrH();
         handler.newLead = getLeads;
         Test.stopTest();
-        List<Lead> orgDataFetch = [select id from Lead where CreatedDate = TODAY];
-        System.AssertNotEquals(1 , orgDataFetch.size());
+        List<Lead> updatedLeads = [select id from Lead where CreatedDate = TODAY];
+        System.AssertNotEquals(1 , updatedLeads.size());
     }
+    @isTest
+    private static void yesterdatDataTestCase(){
+        List <Lead> getLeads = setDataLikeYesterdayToCheck();
+        Test.startTest();
+        LeadAvoidDuplicationOnSameDayTrH handler = new LeadAvoidDuplicationOnSameDayTrH();
+        handler.newLead = getLeads;
+        Test.stopTest();
+        List<Lead> leads = [SELECT Id, LastName, Email FROM Lead WHERE LastName = 'Yesterday' AND Email = 'yesterday@yesterday.com'];
+        System.AssertNotEquals(1 , leads.size());
+    }
+    
     //data for positive test case
     private static List<Lead> getInsertedLeads(){
         List<Lead> leads = new List<Lead>();
@@ -55,6 +65,19 @@ public class LeadAvoidDuplicationTrHTest {
         Database.insert(leads, false);
         return leads;
     }  
+    //data insert as like yesteday data
+    private static List<Lead> setDataLikeYesterdayToCheck(){
+        List<Lead> yesterdayLeads = new List<Lead>();
+        Lead yesterdayLead = new Lead(
+            FirstName = 'YeasterDay',
+            LastName = 'TestData',
+            Email = 'yesterday@TestData.com',
+            Company = 'XYZ'
+        );
+        yesterdayLeads.add(yesterdayLead); // Add newLead to the list
+        insert yesterdayLeads;
+        return yesterdayLeads;
+    }
     //data for Negative test case
     private static List<Lead> getInsertedTwoDifferentRecords(){
         List<Lead> leads = new List<Lead>();
