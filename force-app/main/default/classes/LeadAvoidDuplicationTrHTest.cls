@@ -33,7 +33,7 @@ public class LeadAvoidDuplicationTrHTest {
         List<Lead> leads = [SELECT Id, LastName, Email FROM Lead WHERE LastName = 'User11' AND Email = 'testuser11@test.com' AND CreatedDate = TODAY];
         
         System.assertEquals(1, leads.size(), 'only one should be inserted');
-
+        System.assertNotEquals(2, leads.size(), 'only one should be inserted');
         System.assertNotEquals(newLeads[0].ID, leads[0].ID, 'The two leads should have different IDs');
     }
     @isTest
@@ -43,8 +43,9 @@ public class LeadAvoidDuplicationTrHTest {
         LeadAvoidDuplicationOnSameDayTrH handler = new LeadAvoidDuplicationOnSameDayTrH();
         handler.newLead = getLeads;
         Test.stopTest();
-        List<Lead> updatedLeads = [select id from Lead where CreatedDate = TODAY];
-        System.AssertNotEquals(1 , updatedLeads.size());
+        List<Lead> updatedLeads = [select id, LastName from Lead where CreatedDate = TODAY];
+        System.AssertNotEquals(1 , updatedLeads.size(),'there will two records');
+        System.AssertNotEquals(updatedLeads[0].LastName, updatedLeads[1].LastName, 'two different lastenames in this test method' );
     }
     @isTest
     private static void yesterdatDataTestCase(){
