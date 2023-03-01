@@ -12,10 +12,10 @@ VERSION        DATE            AUTHOR             DETAIL
 public class LeadAvoidDuplicationTrHTest {
     @testSetup
     static void setup() {
-        List<Lead> leadList = new List<Lead>();
+        List<Lead> leads = new List<Lead>();
         Lead duplicateLead = new Lead(FirstName = 'Duplicate1', LastName = 'User11', Email = 'testuser11@test.com');
-        leadList.add(duplicateLead); // Add newLead to the list
-        insert leadList;
+        leads.add(duplicateLead); // Add newLead to the list
+        insert leads;
         
         List<Lead> yesterdayLeads = new List<Lead>();
         Lead yesterdayLead = new Lead(FirstName = 'YeasterDay', LastName = 'TestData', Email = 'yesterday@TestData.com', CreatedDate = Date.today().addDays(-1));
@@ -49,7 +49,7 @@ public class LeadAvoidDuplicationTrHTest {
     }
     @isTest
     private static void yesterdatDataTestCase(){
-        List <Lead> getLeads = setDataLikeYesterdayToCheck();
+        List <Lead> getLeads = setDataLikeYesterdayForTestClass();
         Test.startTest();
         LeadAvoidDuplicationOnSameDayTrH handler = new LeadAvoidDuplicationOnSameDayTrH();
         handler.newLead = getLeads;
@@ -67,7 +67,7 @@ public class LeadAvoidDuplicationTrHTest {
         return leads;
     }  
     //data insert as like yesteday data
-    private static List<Lead> setDataLikeYesterdayToCheck(){
+    private static List<Lead> setDataLikeYesterdayForTestClass(){
         List<Lead> yesterdayLeads = new List<Lead>();
         Lead yesterdayLead = new Lead(
             FirstName = 'YeasterDay',
