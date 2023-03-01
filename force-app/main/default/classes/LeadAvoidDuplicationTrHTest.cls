@@ -54,7 +54,7 @@ public class LeadAvoidDuplicationTrHTest {
         handler.newLead = getLeads;
         Test.stopTest();
         List<Lead> leads = [SELECT Id, LastName, Email FROM Lead WHERE LastName = 'Yesterday' AND Email = 'yesterday@yesterday.com'];
-        System.AssertNotEquals(1 , leads.size());
+        System.AssertNotEquals(1 , leads.size(), 'there is two data which is inserted yesterday and today');
     }
     
     //data for positive test case
@@ -78,7 +78,7 @@ public class LeadAvoidDuplicationTrHTest {
         insert yesterdayLeads;
         return yesterdayLeads;
     }
-    //data for Negative test case
+     //data for Negative test case
     private static List<Lead> getInsertedTwoDifferentRecords(){
         List<Lead> leads = new List<Lead>();
         Lead lead1 = new Lead(FirstName = 'Duplicate1', LastName = 'User11', Email = 'testuser11@test.com');
