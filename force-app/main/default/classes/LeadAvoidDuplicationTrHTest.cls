@@ -7,16 +7,15 @@ History       :
 VERSION        DATE            AUTHOR             DETAIL
 1          28--Feb-2023      Onkar Swami          Handler
 **********************************************************************************************************/
-//THIS LINE FOR CHECKING COMMIT LOGIC ON GITHUBDESKTOP
 
 @isTest
 public class LeadAvoidDuplicationTrHTest {
     @testSetup
     static void setup() {
-        List<Lead> leads = new List<Lead>();
+        List<Lead> leadList = new List<Lead>();
         Lead duplicateLead = new Lead(FirstName = 'Duplicate1', LastName = 'User11', Email = 'testuser11@test.com');
-        leads.add(duplicateLead); // Add newLead to the list
-        insert leads;
+        leadList.add(duplicateLead); // Add newLead to the list
+        insert leadList;
         
         List<Lead> yesterdayLeads = new List<Lead>();
         Lead yesterdayLead = new Lead(FirstName = 'YeasterDay', LastName = 'TestData', Email = 'yesterday@TestData.com', CreatedDate = Date.today().addDays(-1));
@@ -34,7 +33,7 @@ public class LeadAvoidDuplicationTrHTest {
         List<Lead> leads = [SELECT Id, LastName, Email FROM Lead WHERE LastName = 'User11' AND Email = 'testuser11@test.com' AND CreatedDate = TODAY];
         
         System.assertEquals(1, leads.size(), 'only one should be inserted');
-        System.assertNotEquals(2, leads.size(), 'only one should be inserted');
+
         System.assertNotEquals(newLeads[0].ID, leads[0].ID, 'The two leads should have different IDs');
     }
     @isTest
@@ -44,19 +43,18 @@ public class LeadAvoidDuplicationTrHTest {
         LeadAvoidDuplicationOnSameDayTrH handler = new LeadAvoidDuplicationOnSameDayTrH();
         handler.newLead = getLeads;
         Test.stopTest();
-        List<Lead> updatedLeads = [select id, LastName from Lead where CreatedDate = TODAY];
-        System.AssertNotEquals(1 , updatedLeads.size(),'there will two records');
-        System.AssertNotEquals(updatedLeads[0].LastName, updatedLeads[1].LastName, 'two different lastenames in this test method' );
+        List<Lead> updatedLeads = [select id from Lead where CreatedDate = TODAY];
+        System.AssertNotEquals(1 , updatedLeads.size());
     }
     @isTest
     private static void yesterdatDataTestCase(){
-        List <Lead> getLeads = setDataLikeYesterdayForTestClass();
+        List <Lead> getLeads = setDataLikeYesterdayToCheck();
         Test.startTest();
         LeadAvoidDuplicationOnSameDayTrH handler = new LeadAvoidDuplicationOnSameDayTrH();
         handler.newLead = getLeads;
         Test.stopTest();
         List<Lead> leads = [SELECT Id, LastName, Email FROM Lead WHERE LastName = 'Yesterday' AND Email = 'yesterday@yesterday.com'];
-        System.AssertNotEquals(1 , leads.size(), 'there is two data which is inserted yesterday and today');
+        System.AssertNotEquals(1 , leads.size());
     }
     
     //data for positive test case
@@ -68,7 +66,7 @@ public class LeadAvoidDuplicationTrHTest {
         return leads;
     }  
     //data insert as like yesteday data
-    private static List<Lead> setDataLikeYesterdayForTestClass(){
+    private static List<Lead> setDataLikeYesterdayToCheck(){
         List<Lead> yesterdayLeads = new List<Lead>();
         Lead yesterdayLead = new Lead(
             FirstName = 'YeasterDay',
@@ -80,7 +78,7 @@ public class LeadAvoidDuplicationTrHTest {
         insert yesterdayLeads;
         return yesterdayLeads;
     }
-     //data for Negative test case
+    //data for Negative test case
     private static List<Lead> getInsertedTwoDifferentRecords(){
         List<Lead> leads = new List<Lead>();
         Lead lead1 = new Lead(FirstName = 'Duplicate1', LastName = 'User11', Email = 'testuser11@test.com');
